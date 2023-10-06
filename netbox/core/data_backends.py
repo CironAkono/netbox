@@ -89,6 +89,19 @@ class GitBackend(DataBackend):
             widget=forms.TextInput(attrs={'class': 'form-control'}),
             help_text=_("Only used for cloning with HTTP(S)"),
         ),
+        'custom_ca_cert_path': forms.CharField(
+            required=False,
+            label=_('Custom CA Certificate'),
+            widget=forms.TextInput(attrs={'class': 'form-control'}),
+            help_text=_(f"Only used for cloning with HTTPS"),
+        ),
+        'no_ssl_verification': forms.BooleanField(
+            required=False,
+            initial=False,
+            label=_('Disable SSL Verification'),
+            help_text=_(f"⚠️ Use it at your own risk (!) when cloning with HTTPS"),
+            
+        ),
         'branch': forms.CharField(
             required=False,
             label=_('Branch'),
@@ -107,7 +120,13 @@ class GitBackend(DataBackend):
         if settings.HTTP_PROXIES and self.url_scheme in ('http', 'https'):
             if proxy := settings.HTTP_PROXIES.get(self.url_scheme):
                 config.set("http", "proxy", proxy)
-
+        
+        # Disable SSL verification or apply HTTP sslCAInfo if configured
+        if self.params.get('no_ssl_verification') and self.url_scheme in ('https'):
+            config.set("http", "sslVerify", "false")
+        elif self.params.get('custom_ca_cert_path') and self.url_scheme in ('https'):
+            config.set("http", "sslCAInfo", self.params.get('custom_ca_cert_path'))
+        
         return config
 
     @contextmanager
