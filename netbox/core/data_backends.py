@@ -97,9 +97,10 @@ class GitBackend(DataBackend):
         ),
         'ssl_verification': forms.BooleanField(
             required=False,
-            initial=True,
             label=_('SSL Verification'),
+            widget=forms.CheckboxInput(attrs={'class': 'form-check-input'}),
             help_text=_(f"⚠️ Disable SSL verification at your own risk when cloning with HTTPS"),
+            initial=True,
             
         ),
         'branch': forms.CharField(
