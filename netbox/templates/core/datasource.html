@@ -92,6 +92,8 @@
                   <th scope="row">{{ field.label }}</th>
                   {% if name in backend.sensitive_parameters and not perms.core.change_datasource %}
                     <td>********</td>
+                  {% elif name in "ssl_verification" %}
+                    <td>{% checkmark object.parameters.ssl_verification %}</td>
                   {% else %}
                     <td>{{ object.parameters|get_key:name|placeholder }}</td>
                   {% endif %}
