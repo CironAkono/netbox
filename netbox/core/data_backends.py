@@ -95,11 +95,11 @@ class GitBackend(DataBackend):
             widget=forms.TextInput(attrs={'class': 'form-control'}),
             help_text=_(f"Only used for cloning with HTTPS"),
         ),
-        'no_ssl_verification': forms.BooleanField(
+        'ssl_verification': forms.BooleanField(
             required=False,
-            initial=False,
+            initial=True,
             label=_('Disable SSL Verification'),
-            help_text=_(f"⚠️ Use it at your own risk (!) when cloning with HTTPS"),
+            help_text=_(f"⚠️ Disable SSL verification at your own risk when cloning with HTTPS"),
             
         ),
         'branch': forms.CharField(
@@ -122,7 +122,7 @@ class GitBackend(DataBackend):
                 config.set("http", "proxy", proxy)
         
         # Disable SSL verification or apply HTTP sslCAInfo if configured
-        if self.params.get('no_ssl_verification') and self.url_scheme in ('https'):
+        if not self.params.get('ssl_verification') and self.url_scheme in ('https'):
             config.set("http", "sslVerify", "false")
         elif self.params.get('custom_ca_cert_path') and self.url_scheme in ('https'):
             config.set("http", "sslCAInfo", self.params.get('custom_ca_cert_path'))
