@@ -98,7 +98,7 @@ class GitBackend(DataBackend):
         'ssl_verification': forms.BooleanField(
             required=False,
             initial=True,
-            label=_('Disable SSL Verification'),
+            label=_('SSL Verification'),
             help_text=_(f"⚠️ Disable SSL verification at your own risk when cloning with HTTPS"),
             
         ),
